@@ -1,0 +1,21 @@
+[project]
+name = "tripforge"
+version = "0.1.0"
+description = "AI-powered hyper-personalized travel planning agent"
+requires-python = ">=3.11"
+dependencies = [
+  "google-adk",
+  "mcp",
+  "click",
+  "httpx",
+  "rich",
+  "python-dotenv",
+  "cryptography",
+]
+
+[project.scripts]
+tripforge = "tripforge.cli:tripforge"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

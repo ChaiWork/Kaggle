@@ -1,0 +1,16 @@
+.env
+profiles/*.json
+!profiles/.gitkeep
+*.pyc
+__pycache__/
+.DS_Store
+*.pdf
+*_trip.md
+itinerary.md
+replanned.md
+paris_trip.md
+paris_trip_updated.md
+.pytest_cache/
+*.egg-info/
+dist/
+build/
