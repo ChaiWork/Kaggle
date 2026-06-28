@@ -123,6 +123,15 @@ COUNTRY_INFO_FALLBACK = {
         "visa_requirements_note": "Most nationalities enjoy 30 to 90 days visa-free entry. Must fill in MDAC (Malaysia Digital Arrival Card) 3 days before arrival.",
         "tipping_culture": "Tipping is not customary. A 10% service charge is usually added to bills in restaurants.",
         "useful_travel_tips": "Remove your shoes before entering homes and places of worship. Dress modestly when visiting mosques. Use your right hand to shake hands or eat."
+    },
+    "germany": {
+        "currency": "EUR",
+        "language": "German",
+        "timezone": "UTC+1",
+        "emergency_numbers": {"police": "110", "ambulance": "112", "general": "112"},
+        "visa_requirements_note": "Schengen Area rules apply. 90-day tourist visa-free for US, Canada, Australia, etc.",
+        "tipping_culture": "Tipping is optional but standard (around 5-10% in sit-down restaurants). Rounding up is common.",
+        "useful_travel_tips": "Carry cash (many small shops and restaurants in Berlin do not accept credit cards). Validate your train/metro ticket on the platform before boarding."
     }
 }
 
@@ -558,6 +567,8 @@ async def get_country_info(country_name: str) -> dict:
         mapped_country = "indonesia"
     elif "malaysia" in country_clean:
         mapped_country = "malaysia"
+    elif "germany" in country_clean or "berlin" in country_clean:
+        mapped_country = "germany"
         
     # Check if we are in mock mode
     if is_mock:

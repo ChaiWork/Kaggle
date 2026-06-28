@@ -921,6 +921,17 @@ async def get_country_info_tool(country_name: str) -> dict:
                 "useful_travel_tips": "Dining hours are late (lunch at 2 PM, dinner at 9 PM). Watch out for pickpockets in crowded tourist spots.",
                 "source": "fallback_local_database"
             }
+        elif "germany" in c_name or "berlin" in c_name:
+            result = {
+                "currency": "EUR",
+                "language": "German",
+                "timezone": "UTC+1",
+                "emergency_numbers": {"General": "112", "Police": "110", "Ambulance": "112"},
+                "visa_requirements_note": "Schengen area rules apply. 90-day visa-free entry for tourist visits.",
+                "tipping_culture": "Tipping is optional but standard (around 5-10% in sit-down restaurants). Rounding up is common.",
+                "useful_travel_tips": "Carry cash (many small shops and restaurants in Berlin do not accept credit cards). Validate your train/metro ticket on the platform before boarding.",
+                "source": "fallback_local_database"
+            }
         elif "indonesia" in c_name or "bali" in c_name:
             result = {
                 "currency": "IDR",
@@ -1220,7 +1231,7 @@ async def stream_tripforge(
                 console.print(f"[dim][ItineraryAgent Reasoning]: {itinerary_response}[/dim]")
                 
         # Parse itinerary text
-        itinerary_md_match = re.search(r"---ITINERARY_MARKDOWN---\s*(.*?)(?:---ITINERARY_JSON---|$$)", itinerary_response, re.DOTALL)
+        itinerary_md_match = re.search(r"(?:---|#)?\s*ITINERARY_MARKDOWN\s*(?:---|#)?\s*(.*?)(?:\s*(?:---|#)?\s*ITINERARY_JSON\s*(?:---|#)?|$)", itinerary_response, re.IGNORECASE | re.DOTALL)
         final_markdown = itinerary_md_match.group(1).strip() if itinerary_md_match else itinerary_response
         
         yield {
@@ -1239,7 +1250,7 @@ async def stream_tripforge(
             "icon": "⚡"
         }
         
-        itinerary_json_match = re.search(r"---ITINERARY_JSON---\s*(\{.*\})", itinerary_response, re.DOTALL)
+        itinerary_json_match = re.search(r"(?:---|#)?\s*ITINERARY_JSON\s*(?:---|#)?\s*(\{.*\})", itinerary_response, re.IGNORECASE | re.DOTALL)
         
         has_disruptions = False
         disrupted_activity = ""
@@ -1301,7 +1312,7 @@ async def stream_tripforge(
             }
             
         # Parse final summary dict
-        final_json_match = re.search(r"---ITINERARY_JSON---\s*(\{.*\})", itinerary_response, re.DOTALL)
+        final_json_match = re.search(r"(?:---|#)?\s*ITINERARY_JSON\s*(?:---|#)?\s*(\{.*\})", itinerary_response, re.IGNORECASE | re.DOTALL)
         if final_json_match:
             try:
                 summary_data = json.loads(final_json_match.group(1))
@@ -1447,10 +1458,10 @@ async def stream_replan(
         }
         
         # Parse replanned text
-        replan_md_match = re.search(r"---REPLANNED_MARKDOWN---\s*(.*?)(?:---REPLANNED_JSON---|$$)", replan_response, re.DOTALL)
+        replan_md_match = re.search(r"(?:---|#)?\s*REPLANNED_MARKDOWN\s*(?:---|#)?\s*(.*?)(?:\s*(?:---|#)?\s*REPLANNED_JSON\s*(?:---|#)?|$)", replan_response, re.IGNORECASE | re.DOTALL)
         final_replan_md = replan_md_match.group(1).strip() if replan_md_match else replan_response
         
-        replan_json_match = re.search(r"---REPLANNED_JSON---\s*(\{.*\})", replan_response, re.DOTALL)
+        replan_json_match = re.search(r"(?:---|#)?\s*REPLANNED_JSON\s*(?:---|#)?\s*(\{.*\})", replan_response, re.IGNORECASE | re.DOTALL)
         if replan_json_match:
             try:
                 summary_data = json.loads(replan_json_match.group(1))
