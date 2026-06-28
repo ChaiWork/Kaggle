@@ -80,12 +80,13 @@ def set_security_headers(response):
     """Sets standard security headers on all responses to satisfy competition rules."""
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
-    # Allow Tailwind CSS, Marked.js, and Google Fonts
+    # Allow Tailwind CSS, Marked.js, Google Fonts, and Leaflet Map assets
     response.headers["Content-Security-Policy"] = (
         "default-src 'self' cdn.tailwindcss.com cdn.jsdelivr.net fonts.googleapis.com fonts.gstatic.com; "
-        "style-src 'self' 'unsafe-inline' cdn.tailwindcss.com fonts.googleapis.com; "
+        "style-src 'self' 'unsafe-inline' cdn.tailwindcss.com fonts.googleapis.com unpkg.com; "
         "font-src 'self' fonts.gstatic.com; "
-        "script-src 'self' 'unsafe-inline' cdn.tailwindcss.com cdn.jsdelivr.net; "
+        "script-src 'self' 'unsafe-inline' cdn.tailwindcss.com cdn.jsdelivr.net unpkg.com; "
+        "img-src 'self' data: https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org unpkg.com; "
         "connect-src 'self'"
     )
     return response
