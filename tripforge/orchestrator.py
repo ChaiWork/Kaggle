@@ -563,11 +563,226 @@ def apply_mock_runner_patch():
 
 # --- MCP Tool Client-side Wrappers ---
 
+def _clean_city_param(city: Any) -> str:
+    if not city:
+        return "Tokyo"
+    if isinstance(city, dict):
+        for key in ["destination", "city", "location", "country", "name"]:
+            if key in city and isinstance(city[key], str):
+                return city[key]
+        for val in city.values():
+            if isinstance(val, str):
+                return val
+        return "Tokyo"
+    if isinstance(city, (list, tuple)):
+        if len(city) > 0:
+            return _clean_city_param(city[0])
+        return "Tokyo"
+    return str(city)
+
+def _clean_string_param(val: Any) -> Optional[str]:
+    if not val:
+        return None
+    if isinstance(val, (list, tuple)):
+        if len(val) > 0:
+            return _clean_string_param(val[0])
+        return None
+    if isinstance(val, dict):
+        for key in ["name", "value", "type", "preference"]:
+            if key in val and isinstance(val[key], str):
+                return val[key]
+        for v in val.values():
+            if isinstance(v, str):
+                return v
+        return None
+    val_str = str(val).strip()
+    if val_str.lower() in ["none", "null", "undefined", ""]:
+        return None
+    return val_str
+
+def _clean_bool_param(val: Any) -> bool:
+    if not val:
+        return False
+    if isinstance(val, bool):
+        return val
+    val_str = str(val).strip().lower()
+    if val_str in ["false", "none", "no", "0", "null", "undefined"]:
+        return False
+    return True
+
+def _normalize_summary_data(summary_data: Any, destination: str, days: int, travelers: int, budget: float, currency: str, start_date: str = None) -> dict:
+    if not isinstance(summary_data, dict):
+        summary_data = {}
+        
+    # Standard fallback basic fields
+    if not summary_data.get("destination"):
+        summary_data["destination"] = destination
+    if not summary_data.get("days"):
+        summary_data["days"] = days
+    if not summary_data.get("travelers"):
+        summary_data["travelers"] = travelers
+    if not summary_data.get("budget"):
+        summary_data["budget"] = budget
+    if not summary_data.get("currency"):
+        summary_data["currency"] = currency
+    if not summary_data.get("total_cost"):
+        summary_data["total_cost"] = budget
+        
+    # Emergency contacts
+    emerg = summary_data.get("emergency_contacts")
+    if not emerg:
+        summary_data["emergency_contacts"] = {"General": "112", "Police": "112", "Ambulance": "112"}
+    elif isinstance(emerg, str):
+        summary_data["emergency_contacts"] = {"Contacts": emerg}
+    elif not isinstance(emerg, dict):
+        summary_data["emergency_contacts"] = {"General": "112", "Police": "112", "Ambulance": "112"}
+        
+    # Packing suggestions
+    packing = summary_data.get("packing_suggestions")
+    if not packing:
+        summary_data["packing_suggestions"] = ["Comfortable walking shoes", "Passport/Visa", "Adapters"]
+    elif isinstance(packing, str):
+        items = [x.strip() for x in re.split(r'[,;\n]', packing) if x.strip()]
+        summary_data["packing_suggestions"] = items if items else ["Comfortable walking shoes"]
+    elif not isinstance(packing, (list, tuple)):
+        summary_data["packing_suggestions"] = ["Comfortable walking shoes"]
+        
+    # Currency tips
+    tips = summary_data.get("currency_tips")
+    if not tips:
+        summary_data["currency_tips"] = "Credit cards widely accepted."
+    elif not isinstance(tips, str):
+        summary_data["currency_tips"] = str(tips)
+        
+    # Geocoding & Weather Integration
+    import urllib.request
+    import urllib.parse
+    
+    coords_map = {
+        "paris": (48.8566, 2.3522),
+        "tokyo": (35.6762, 139.6503),
+        "barcelona": (41.3851, 2.1734),
+        "new york": (40.7128, -74.0060),
+        "bali": (-8.4095, 115.1889),
+        "berlin": (52.5200, 13.4050),
+        "germany": (52.5200, 13.4050),
+        "munich": (48.1351, 11.5820),
+        "london": (51.5074, -0.1278)
+    }
+    
+    dest_clean = destination.strip().lower()
+    matched_coords = None
+    for key, coords in coords_map.items():
+        if key in dest_clean:
+            matched_coords = coords
+            break
+            
+    if matched_coords:
+        lat, lon = matched_coords
+    else:
+        try:
+            quoted = urllib.parse.quote(destination)
+            url = f"https://geocoding-api.open-meteo.com/v1/search?name={quoted}&count=1&language=en&format=json"
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, timeout=3.0) as response:
+                data = json.loads(response.read().decode())
+                if data.get("results"):
+                    lat = data["results"][0]["latitude"]
+                    lon = data["results"][0]["longitude"]
+                else:
+                    lat, lon = 48.8566, 2.3522
+        except Exception:
+            lat, lon = 48.8566, 2.3522
+            
+    summary_data["latitude"] = lat
+    summary_data["longitude"] = lon
+    
+    # Establish seasonal weather fallback defaults first
+    try:
+        month = 8
+        if start_date:
+            try:
+                month = datetime.strptime(start_date, "%Y-%m-%d").month
+            except Exception:
+                pass
+        
+        if month in [12, 1, 2]:
+            cond, icon = "Cool/Rainy", "🌧️"
+            high, low = 8, 3
+        elif month in [3, 4, 5]:
+            cond, icon = "Mild/Spring", "⛅"
+            high, low = 16, 8
+        elif month in [6, 7, 8]:
+            cond, icon = "Warm/Sunny", "☀️"
+            high, low = 26, 16
+        else:
+            cond, icon = "Cool/Autumn", "🍂"
+            high, low = 15, 9
+            
+        summary_data["weather_high"] = high
+        summary_data["weather_low"] = low
+        summary_data["weather_condition"] = cond
+        summary_data["weather_icon"] = icon
+    except Exception:
+        summary_data["weather_high"] = 22.0
+        summary_data["weather_low"] = 12.0
+        summary_data["weather_condition"] = "Mild Weather"
+        summary_data["weather_icon"] = "⛅"
+        
+    # Attempt to query live forecast from Open-Meteo if not in mock mode
+    is_mock = os.getenv("TRIPFORGE_MODE", "live").lower() == "mock"
+    if not is_mock:
+        try:
+            s_date = start_date or datetime.today().strftime('%Y-%m-%d')
+            weather_url = (
+                f"https://api.open-meteo.com/v1/forecast"
+                f"?latitude={lat}&longitude={lon}"
+                f"&daily=temperature_2m_max,temperature_2m_min,weather_code"
+                f"&timezone=auto&start_date={s_date}&end_date={s_date}"
+            )
+            req = urllib.request.Request(weather_url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, timeout=3.0) as response:
+                w_data = json.loads(response.read().decode())
+                daily = w_data.get("daily", {})
+                if daily and daily.get("temperature_2m_max"):
+                    temp_high = daily["temperature_2m_max"][0]
+                    temp_low = daily["temperature_2m_min"][0]
+                    wcode = daily.get("weather_code", [0])[0]
+                    
+                    if wcode == 0:
+                        cond, icon = "Sunny", "☀️"
+                    elif wcode in [1, 2, 3]:
+                        cond, icon = "Partly Cloudy", "⛅"
+                    elif wcode in [45, 48]:
+                        cond, icon = "Foggy", "🌫️"
+                    elif wcode in [51, 53, 55]:
+                        cond, icon = "Drizzle", "🌧️"
+                    elif wcode in [61, 63, 65]:
+                        cond, icon = "Rainy", "🌧️"
+                    elif wcode in [71, 73, 75]:
+                        cond, icon = "Snowy", "❄️"
+                    elif wcode in [80, 81, 82]:
+                        cond, icon = "Showers", "🌦️"
+                    else:
+                        cond, icon = "Overcast", "☁️"
+                        
+                    summary_data["weather_high"] = temp_high
+                    summary_data["weather_low"] = temp_low
+                    summary_data["weather_condition"] = cond
+                    summary_data["weather_icon"] = icon
+        except Exception:
+            pass
+            
+    return summary_data
+
 async def get_weather_tool(city: str, date: str) -> dict:
     """Wrapper calling MCP get_weather tool."""
     global _ACTIVE_MCP_SESSION
     if not _ACTIVE_MCP_SESSION:
         raise RuntimeError("MCP Client Session not active.")
+        
+    city = _clean_city_param(city)
+    date = _clean_string_param(date) or datetime.today().strftime('%Y-%m-%d')
         
     # Security Guard Consent Check
     if not guard_external_call("Open-Meteo Weather API", f"City: {city}, Date: {date}"):
@@ -611,8 +826,12 @@ async def get_weather_tool(city: str, date: str) -> dict:
     params["signature"] = sign_tool_call("get_weather", params)
     
     res = await _ACTIVE_MCP_SESSION.call_tool("get_weather", params)
-    if res.content and len(res.content) > 0:
-        return json.loads(res.content[0].text)
+    try:
+        if res.content and len(res.content) > 0:
+            return json.loads(res.content[0].text)
+    except Exception as e:
+        sys.stderr.write(f"[ORCHESTRATOR] Error parsing weather tool response: {str(e)}\n")
+        sys.stderr.flush()
     return {}
 
 async def search_activities_tool(city: str, accessibility_required: bool = False, dietary_preference: str = None, category: str = None) -> list:
@@ -621,18 +840,31 @@ async def search_activities_tool(city: str, accessibility_required: bool = False
     if not _ACTIVE_MCP_SESSION:
         raise RuntimeError("MCP Client Session not active.")
         
+    city = _clean_city_param(city)
+    accessibility_required = _clean_bool_param(accessibility_required)
+    dietary_preference = _clean_string_param(dietary_preference)
+    category = _clean_string_param(category)
+        
     # Local activities DB is considered a safe local query, so we skip warning
     params = {
         "city": city, 
-        "accessibility_required": accessibility_required, 
-        "dietary_preference": dietary_preference, 
-        "category": category
+        "accessibility_required": accessibility_required
     }
+    if dietary_preference is not None:
+        params["dietary_preference"] = dietary_preference
+    if category is not None:
+        params["category"] = category
+        
     params["signature"] = sign_tool_call("search_activities", params)
     
     res = await _ACTIVE_MCP_SESSION.call_tool("search_activities", params)
-    if res.content and len(res.content) > 0:
-        return json.loads(res.content[0].text)
+    try:
+        if res.content and len(res.content) > 0:
+            return json.loads(res.content[0].text)
+    except Exception as e:
+        raw_text = res.content[0].text if (res.content and len(res.content) > 0) else None
+        sys.stderr.write(f"[ORCHESTRATOR] Error parsing search_activities tool response: {str(e)}. Raw text: {repr(raw_text)}\n")
+        sys.stderr.flush()
     return []
 
 async def get_country_info_tool(country_name: str) -> dict:
@@ -640,6 +872,8 @@ async def get_country_info_tool(country_name: str) -> dict:
     global _ACTIVE_MCP_SESSION
     if not _ACTIVE_MCP_SESSION:
         raise RuntimeError("MCP Client Session not active.")
+        
+    country_name = _clean_city_param(country_name)
         
     if not guard_external_call("RestCountries API", f"Country: {country_name}"):
         # Fallback to local country info data instead of raising PermissionError
@@ -705,8 +939,12 @@ async def get_country_info_tool(country_name: str) -> dict:
     params["signature"] = sign_tool_call("get_country_info", params)
     
     res = await _ACTIVE_MCP_SESSION.call_tool("get_country_info", params)
-    if res.content and len(res.content) > 0:
-        return json.loads(res.content[0].text)
+    try:
+        if res.content and len(res.content) > 0:
+            return json.loads(res.content[0].text)
+    except Exception as e:
+        sys.stderr.write(f"[ORCHESTRATOR] Error parsing get_country_info tool response: {str(e)}\n")
+        sys.stderr.flush()
     return {}
 
 async def estimate_transport_cost_tool(origin_city: str, destination_city: str, transport_type: str) -> dict:
@@ -714,6 +952,10 @@ async def estimate_transport_cost_tool(origin_city: str, destination_city: str, 
     global _ACTIVE_MCP_SESSION
     if not _ACTIVE_MCP_SESSION:
         raise RuntimeError("MCP Client Session not active.")
+        
+    origin_city = _clean_city_param(origin_city)
+    destination_city = _clean_city_param(destination_city)
+    transport_type = _clean_string_param(transport_type) or "flight"
         
     params = {
         "origin_city": origin_city, 
@@ -723,8 +965,12 @@ async def estimate_transport_cost_tool(origin_city: str, destination_city: str, 
     params["signature"] = sign_tool_call("estimate_transport_cost", params)
     
     res = await _ACTIVE_MCP_SESSION.call_tool("estimate_transport_cost", params)
-    if res.content and len(res.content) > 0:
-        return json.loads(res.content[0].text)
+    try:
+        if res.content and len(res.content) > 0:
+            return json.loads(res.content[0].text)
+    except Exception as e:
+        sys.stderr.write(f"[ORCHESTRATOR] Error parsing estimate_transport_cost tool response: {str(e)}\n")
+        sys.stderr.flush()
     return {}
 
 async def check_disruption_tool(city: str, activity_name: str, date: str) -> dict:
@@ -733,12 +979,20 @@ async def check_disruption_tool(city: str, activity_name: str, date: str) -> dic
     if not _ACTIVE_MCP_SESSION:
         raise RuntimeError("MCP Client Session not active.")
         
+    city = _clean_city_param(city)
+    activity_name = _clean_string_param(activity_name) or ""
+    date = _clean_string_param(date) or datetime.today().strftime('%Y-%m-%d')
+        
     params = {"city": city, "activity_name": activity_name, "date": date}
     params["signature"] = sign_tool_call("check_disruption", params)
     
     res = await _ACTIVE_MCP_SESSION.call_tool("check_disruption", params)
-    if res.content and len(res.content) > 0:
-        return json.loads(res.content[0].text)
+    try:
+        if res.content and len(res.content) > 0:
+            return json.loads(res.content[0].text)
+    except Exception as e:
+        sys.stderr.write(f"[ORCHESTRATOR] Error parsing check_disruption tool response: {str(e)}\n")
+        sys.stderr.flush()
     return {}
 
 # Helper to extract text contents from events
@@ -815,7 +1069,7 @@ async def stream_tripforge(
         mcp_tools = [get_weather_tool, search_activities_tool, get_country_info_tool, estimate_transport_cost_tool]
         itinerary_tools = [check_disruption_tool, search_activities_tool]
         
-        model_name = "gemini-2.5-flash"
+        model_name = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
         p_agent = get_profile_agent(model_name)
         r_agent = get_research_agent(model_name, mcp_tools)
         i_agent = get_itinerary_agent(model_name, itinerary_tools)
@@ -857,14 +1111,27 @@ async def stream_tripforge(
         # Parse profile details
         profile_json_match = re.search(r"---PROFILE_JSON---\s*(\{.*?\})", profile_response, re.DOTALL)
         if profile_json_match:
-            profile_data = json.loads(profile_json_match.group(1))
+            try:
+                profile_data = json.loads(profile_json_match.group(1))
+            except Exception:
+                profile_data = raw_input
         else:
             profile_data = raw_input
+            
+        t_val = profile_data.get('travelers') or raw_input.get('travelers') or travelers or 1
+        c_val = profile_data.get('currency') or raw_input.get('currency') or currency or "USD"
+        b_val = profile_data.get('budget')
+        if b_val is None:
+            b_val = raw_input.get('budget') or budget or 0.0
+        try:
+            b_formatted = f"{float(b_val):,.2f}"
+        except Exception:
+            b_formatted = "0.00"
             
         yield {
             "type": "progress",
             "step": 1,
-            "message": f"Profile validated successfully ({profile_data.get('travelers')} travelers, {profile_data.get('currency')} {profile_data.get('budget'):,.2f} budget)",
+            "message": f"Profile validated successfully ({t_val} travelers, {c_val} {b_formatted} budget)",
             "icon": "👤",
             "status": "done"
         }
@@ -1015,19 +1282,8 @@ async def stream_tripforge(
         else:
             summary_data = {}
             
-        # Ensure fallback fields
-        if not summary_data:
-            summary_data = {
-                "destination": destination,
-                "days": days,
-                "travelers": travelers,
-                "budget": budget,
-                "currency": currency,
-                "total_cost": budget,
-                "packing_suggestions": ["Comfortable walking shoes", "Passport/Visa", "Adapters"],
-                "emergency_contacts": {"General": "112", "Police": "112", "Ambulance": "112"},
-                "currency_tips": "Credit cards widely accepted."
-            }
+        # Hardened type-safe normalizer
+        summary_data = _normalize_summary_data(summary_data, destination, days, travelers, budget, currency, start_date)
             
         _ACTIVE_MCP_SESSION = None
         yield {
@@ -1096,7 +1352,8 @@ async def stream_replan(
         
     from tripforge.agents.disruption_agent import get_disruption_agent
     replan_tools = [check_disruption_tool, search_activities_tool, get_weather_tool]
-    d_agent = get_disruption_agent("gemini-2.5-flash", replan_tools)
+    d_model = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
+    d_agent = get_disruption_agent(d_model, replan_tools)
     
     started_here = False
     stack = AsyncExitStack()
@@ -1166,6 +1423,15 @@ async def stream_replan(
                 summary_data = {}
         else:
             summary_data = {}
+            
+        # Hardened type-safe normalizer for replan summary
+        dest_val = profile.get("destination") or "Paris"
+        days_val = profile.get("days") or 3
+        trav_val = profile.get("travelers") or 2
+        budg_val = profile.get("budget") or 2000.0
+        curr_val = profile.get("currency") or "USD"
+        start_date_val = profile.get("start_date")
+        summary_data = _normalize_summary_data(summary_data, dest_val, days_val, trav_val, budg_val, curr_val, start_date_val)
             
         yield {
             "type": "progress",

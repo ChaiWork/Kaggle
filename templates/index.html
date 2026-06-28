@@ -42,7 +42,7 @@
                            value="{{ form_data.destination if form_data else '' }}"
                            placeholder="e.g. Paris, France"
                            class="w-full bg-gray-950/60 border border-gray-800 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
-                    <p class="text-xs text-gray-500 mt-1">Supported target cities: Paris, Tokyo, Barcelona, New York, Bali</p>
+                    <p class="text-xs text-gray-500 mt-1">Supported target cities: Paris, Tokyo, Barcelona, New York, Bali (or enter any other destination)</p>
                 </div>
 
                 <!-- Number of Days -->
@@ -144,6 +144,18 @@
                     <div>
                         <span class="font-semibold block text-xs md:text-sm">🔒 Consent to Query External APIs (No-Cloud-Sync Guard)</span>
                         <span class="text-[10px] md:text-xs text-gray-400 block mt-0.5">Allows the live agents to query Open-Meteo, RestCountries, and Local Activities databases. Uncheck to force offline mode.</span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Offline Demonstration (Mock Mode) -->
+            <div class="md:col-span-2 py-2">
+                <label class="flex items-center space-x-3 text-sm text-blue-400 cursor-pointer select-none bg-blue-950/20 border border-blue-900/30 rounded-xl px-4 py-3 hover:bg-blue-950/30 hover:border-blue-800/50 transition-all">
+                    <input type="checkbox" name="mock_mode" value="true"
+                           class="w-4 h-4 rounded bg-gray-950 border-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-950">
+                    <div>
+                        <span class="font-semibold block text-xs md:text-sm">🧪 Enable Mock Mode (Offline Demonstration)</span>
+                        <span class="text-[10px] md:text-xs text-gray-400 block mt-0.5">Runs the multi-agent system offline using local mock generation. Useful if you have no API key or hit Gemini rate limits.</span>
                     </div>
                 </label>
             </div>

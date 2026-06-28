@@ -136,8 +136,6 @@ tripforge/
 ├── README.md                       # Competition documentation
 ├── data/
 │   └── activities_db.json          # Local activities database
-├── tests/
-│   └── test_tripforge.py           # Pytest unit tests suite
 ├── templates/                      # Flask HTML templates
 │   ├── base.html                   # Core layout skeleton
 │   ├── index.html                  # Main interactive planning form
@@ -161,11 +159,6 @@ tripforge/
 │   ├── mcp_server/
 │   │   ├── __init__.py
 │   │   └── travel_tools_server.py  # Python MCP SDK travel tools server
-│   ├── tools/                      # Tool Client Wrappers
-│   │   ├── __init__.py
-│   │   ├── weather_tool.py
-│   │   ├── activities_tool.py
-│   │   └── country_info_tool.py
 │   └── utils/
 │       ├── __init__.py
 │       ├── security.py             # HMAC, Fernet keys, and PII redactor

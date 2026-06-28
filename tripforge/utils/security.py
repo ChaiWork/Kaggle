@@ -100,10 +100,8 @@ def sanitize_destination(text: str) -> str:
             break
             
     if not matched:
-        raise ValueError(
-            f"Destination '{cleaned}' is not supported. "
-            f"Supported cities are: Paris, Tokyo, Barcelona, New York, Bali."
-        )
+        # Allow other destinations but sanitize and format them
+        return cleaned.title()
     return matched
 
 def sanitize_budget(value: Any) -> float:

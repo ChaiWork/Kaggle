@@ -8,7 +8,12 @@ import json
 import asyncio
 from datetime import datetime, date as date_type
 import httpx
+import logging
 from mcp.server.fastmcp import FastMCP
+
+# Force all logging to stderr to prevent stdio transport corruption
+logging.basicConfig(level=logging.INFO, stream=sys.stderr, force=True)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # Initialize FastMCP Server
 mcp = FastMCP("TripForge-Travel-Tools")
@@ -109,6 +114,15 @@ COUNTRY_INFO_FALLBACK = {
         "visa_requirements_note": "Visa on Arrival (VoA) required for most passports ($35 USD for 30 days).",
         "tipping_culture": "Not mandatory, but 5-10% is highly appreciated by drivers and restaurant staff.",
         "useful_travel_tips": "Drink bottled water only. Dress modestly when visiting temples (wear a sarong). Carry insect repellent."
+    },
+    "malaysia": {
+        "currency": "MYR",
+        "language": "Malay, English",
+        "timezone": "UTC+8",
+        "emergency_numbers": {"police": "999", "ambulance": "999", "general": "999"},
+        "visa_requirements_note": "Most nationalities enjoy 30 to 90 days visa-free entry. Must fill in MDAC (Malaysia Digital Arrival Card) 3 days before arrival.",
+        "tipping_culture": "Tipping is not customary. A 10% service charge is usually added to bills in restaurants.",
+        "useful_travel_tips": "Remove your shoes before entering homes and places of worship. Dress modestly when visiting mosques. Use your right hand to shake hands or eat."
     }
 }
 
@@ -316,8 +330,8 @@ async def get_weather(city: str, date: str) -> dict:
 async def search_activities(
     city: str, 
     accessibility_required: bool = False, 
-    dietary_preference: str = None, 
-    category: str = None
+    dietary_preference: str | None = None, 
+    category: str | None = None
 ) -> list:
     """
     Search and filter local activities from the database.
@@ -392,6 +406,126 @@ async def search_activities(
         }
         filtered.append(item)
         
+    if not filtered:
+        target_name = city.title()
+        fallbacks = [
+            {
+                "id": f"{city_clean}_landmark_tour",
+                "city": target_name,
+                "country": "Unknown",
+                "name": f"Historic Landmarks & Architecture Walk in {target_name}",
+                "description": f"Explore the most famous landmarks, squares, and historic buildings around the center of {target_name}.",
+                "category": "culture",
+                "duration_hours": 3.0,
+                "cost_per_person": 20.0,
+                "currency": "USD",
+                "accessibility_rating": "full",
+                "wheelchair_accessible": True,
+                "dietary_options": [],
+                "best_time_of_day": "morning",
+                "insider_tip": "Book early in the morning to avoid midday crowds and capture the best lighting.",
+                "tags": ["culture", "sightseeing", "guided"]
+            },
+            {
+                "id": f"{city_clean}_food_tasting",
+                "city": target_name,
+                "country": "Unknown",
+                "name": f"Local Street Food & Culinary Tasting Experience",
+                "description": f"Dive into the authentic food stalls and markets of {target_name} to taste traditional delicacies.",
+                "category": "food",
+                "duration_hours": 2.5,
+                "cost_per_person": 35.0,
+                "currency": "USD",
+                "accessibility_rating": "partial",
+                "wheelchair_accessible": True,
+                "dietary_options": ["vegetarian", "vegan", "halal", "gluten-free"],
+                "best_time_of_day": "evening",
+                "insider_tip": "Come hungry! Try the local specialty recommendations from the vendors.",
+                "tags": ["food", "dining", "local"]
+            },
+            {
+                "id": f"{city_clean}_nature_escape",
+                "city": target_name,
+                "country": "Unknown",
+                "name": f"Scenic Nature Park & Botanical Garden Tour",
+                "description": f"Stroll through the lush botanical gardens, nature trails, and green reserves of {target_name}.",
+                "category": "nature",
+                "duration_hours": 4.0,
+                "cost_per_person": 10.0,
+                "currency": "USD",
+                "accessibility_rating": "full",
+                "wheelchair_accessible": True,
+                "dietary_options": [],
+                "best_time_of_day": "afternoon",
+                "insider_tip": "Bring sunscreen, a bottle of water, and comfortable walking shoes.",
+                "tags": ["nature", "outdoors", "scenic"]
+            },
+            {
+                "id": f"{city_clean}_museum_visit",
+                "city": target_name,
+                "country": "Unknown",
+                "name": f"National Museum & Art Exhibition",
+                "description": f"Learn the history, heritage, and contemporary art culture of the region in the premier museum.",
+                "category": "culture",
+                "duration_hours": 2.0,
+                "cost_per_person": 15.0,
+                "currency": "USD",
+                "accessibility_rating": "full",
+                "wheelchair_accessible": True,
+                "dietary_options": [],
+                "best_time_of_day": "afternoon",
+                "insider_tip": "The audio guide is included with ticket purchase; don't forget to ask for it.",
+                "tags": ["indoor", "museum", "art"]
+            },
+            {
+                "id": f"{city_clean}_spa_wellness",
+                "city": target_name,
+                "country": "Unknown",
+                "name": f"Traditional Wellness Massage & Spa Retreat",
+                "description": f"Relax with a premium therapeutic massage and bath using locally sourced essential oils.",
+                "category": "relaxation",
+                "duration_hours": 2.0,
+                "cost_per_person": 50.0,
+                "currency": "USD",
+                "accessibility_rating": "full",
+                "wheelchair_accessible": True,
+                "dietary_options": [],
+                "best_time_of_day": "evening",
+                "insider_tip": "Drink the hot ginger tea provided at the end of the session to relax your muscles.",
+                "tags": ["indoor", "relaxation", "wellness"]
+            }
+        ]
+        
+        for act in fallbacks:
+            if accessibility_required and not act.get("wheelchair_accessible", False):
+                continue
+            if category and category.strip().lower() != act.get("category", "").lower():
+                continue
+            if dietary_preference:
+                pref_clean = dietary_preference.strip().lower()
+                if act.get("category") == "food":
+                    options = [o.lower() for o in act.get("dietary_options", [])]
+                    if pref_clean not in options:
+                        continue
+            
+            diet_friendly = True if not dietary_preference else (dietary_preference.lower() in [o.lower() for o in act.get("dietary_options", [])])
+            item = {
+                "id": act.get("id"),
+                "name": act.get("name"),
+                "description": act.get("description"),
+                "duration_hours": act.get("duration_hours"),
+                "cost_per_person": act.get("cost_per_person"),
+                "accessibility_rating": act.get("accessibility_rating"),
+                "dietary_friendly": diet_friendly,
+                "dietary_options": act.get("dietary_options", []),
+                "wheelchair_accessible": act.get("wheelchair_accessible", False),
+                "best_time_of_day": act.get("best_time_of_day"),
+                "category": act.get("category"),
+                "insider_tip": act.get("insider_tip", ""),
+                "tags": act.get("tags", [])
+            }
+            filtered.append(item)
+            
     log_event("RESPONSE", f"Found {len(filtered)} activities matching filters.")
     return filtered
 
@@ -422,6 +556,8 @@ async def get_country_info(country_name: str) -> dict:
         mapped_country = "usa"
     elif "indonesia" in country_clean or "bali" in country_clean:
         mapped_country = "indonesia"
+    elif "malaysia" in country_clean:
+        mapped_country = "malaysia"
         
     # Check if we are in mock mode
     if is_mock:

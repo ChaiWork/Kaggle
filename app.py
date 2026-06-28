@@ -133,7 +133,8 @@ def plan():
     }
     
     session["replan_mode"] = False
-    session["mock_mode"] = (os.getenv("TRIPFORGE_MODE", "live").lower() == "mock") or not os.getenv("GOOGLE_API_KEY")
+    mock_mode_raw = request.form.get("mock_mode", "false")
+    session["mock_mode"] = (mock_mode_raw == "true") or (os.getenv("TRIPFORGE_MODE", "live").lower() == "mock") or not os.getenv("GOOGLE_API_KEY")
     
     # Store bypass guard pre-grant consent
     bypass_guard_raw = request.form.get("bypass_guard", "false")
@@ -214,7 +215,12 @@ def stream_events():
                         q.put(event)
                 except Exception as e:
                     log_pipeline_error(e)
-                    q.put({"type": "error", "message": f"Pipeline failed: {str(e)}"})
+                    err_msg = str(e)
+                    if "RESOURCE_EXHAUSTED" in err_msg or "429" in err_msg or "quota" in err_msg.lower():
+                        friendly_msg = "Gemini API rate limit or quota exceeded (429 Resource Exhausted). Please wait a minute before retrying, or check 'Enable Mock Mode' below the launch button to run offline."
+                    else:
+                        friendly_msg = f"Pipeline failed: {err_msg}"
+                    q.put({"type": "error", "message": friendly_msg})
                 finally:
                     q.put(None)
             
