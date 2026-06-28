@@ -294,9 +294,9 @@
             {% if not streaming and summary is defined %}
             setTimeout(() => {
                 try {
-                    const lat = {{ summary.latitude | default(48.8566) }};
-                    const lon = {{ summary.longitude | default(2.3522) }};
-                    const destName = "{{ summary.destination | default('Destination') }}";
+                    const lat = {{ summary.latitude or 48.8566 }};
+                    const lon = {{ summary.longitude or 2.3522 }};
+                    const destName = {{ summary.destination | default('Destination') | tojson }};
                     
                     const map = L.map('map', { zoomControl: false }).setView([lat, lon], 12);
                     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {

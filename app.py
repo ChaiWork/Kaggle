@@ -48,6 +48,11 @@ def log_pipeline_error(error: Exception):
             f.write(f"Error Message: {str(error)}\n")
             f.write(f"Traceback:\n{tb_str}")
             f.write(f"{'='*80}\n")
+    except OSError as e:
+        # Silently ignore read-only file system errors (e.g. on Vercel)
+        if e.errno != 30:
+            sys.stderr.write(f"Failed to write to log file {log_path}: {e}\n")
+            sys.stderr.flush()
     except Exception as log_err:
         sys.stderr.write(f"Failed to write to log file {log_path}: {log_err}\n")
         sys.stderr.flush()
@@ -316,9 +321,18 @@ def download():
     dest_clean = inputs.get("destination", "trip").lower().replace(" ", "_")
     filename = f"tripforge_{dest_clean}.md"
     
-    # Create temp directory in workspace for downloads
+    # Create temp directory in workspace for downloads (fallback to system temp if read-only)
     temp_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scratch")
-    os.makedirs(temp_dir, exist_ok=True)
+    try:
+        os.makedirs(temp_dir, exist_ok=True)
+        test_file = os.path.join(temp_dir, ".write_test")
+        with open(test_file, "w") as f:
+            f.write("")
+        os.remove(test_file)
+    except Exception:
+        import tempfile
+        temp_dir = tempfile.gettempdir()
+        
     temp_path = os.path.join(temp_dir, filename)
     
     with open(temp_path, "w", encoding="utf-8") as f:

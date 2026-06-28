@@ -1068,10 +1068,17 @@ async def stream_tripforge(
     
     # Start MCP Server subprocess and Client Session
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    # Ensure all parent import paths (including site-packages and base_dir) are passed to the subprocess
+    python_path_dirs = [base_dir] + [p for p in sys.path if p]
+    # Remove duplicates while preserving order
+    seen = set()
+    python_path_dirs = [x for x in python_path_dirs if not (x in seen or seen.add(x))]
+    
     server_params = StdioServerParameters(
         command=sys.executable,
         args=["-m", "tripforge.mcp_server.travel_tools_server"],
-        env={**os.environ, "PYTHONPATH": base_dir}
+        env={**os.environ, "PYTHONPATH": os.pathsep.join(python_path_dirs)}
     )
     
     async with AsyncExitStack() as stack:
@@ -1388,10 +1395,17 @@ async def stream_replan(
                 "icon": "🔍"
             }
             base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            
+            # Ensure all parent import paths (including site-packages and base_dir) are passed to the subprocess
+            python_path_dirs = [base_dir] + [p for p in sys.path if p]
+            # Remove duplicates while preserving order
+            seen = set()
+            python_path_dirs = [x for x in python_path_dirs if not (x in seen or seen.add(x))]
+            
             server_params = StdioServerParameters(
                 command=sys.executable,
                 args=["-m", "tripforge.mcp_server.travel_tools_server"],
-                env={**os.environ, "PYTHONPATH": base_dir}
+                env={**os.environ, "PYTHONPATH": os.pathsep.join(python_path_dirs)}
             )
             read, write = await stack.enter_async_context(stdio_client(server_params))
             session = await stack.enter_async_context(ClientSession(read, write))
