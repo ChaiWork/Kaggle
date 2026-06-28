@@ -1,0 +1,480 @@
+
+================================================================================
+Timestamp: 2026-06-28T13:57:19.136520
+Error Type: ExceptionGroup
+Error Message: unhandled errors in a TaskGroup (1 sub-exception)
+Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\codingProject\GITHUB\Kaggle\app.py", line 201, in run_pipeline
+  |     async for event in generator:
+  |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 712, in stream_tripforge
+  |     async with AsyncExitStack() as stack:
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 754, in __aexit__
+  |     raise exc_details[1]
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+  |     cb_suppress = await cb(*exc_details)
+  |                   ^^^^^^^^^^^^^^^^^^^^^^
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 231, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 182, in stdio_client
+  |     async with (
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Exception Group Traceback (most recent call last):
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 189, in stdio_client
+    |     yield read_stream, write_stream
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+    |     cb_suppress = await cb(*exc_details)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\shared\session.py", line 238, in __aexit__
+    |     return await self._task_group.__aexit__(exc_type, exc_val, exc_tb)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+    |     raise BaseExceptionGroup(
+    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+    +-+---------------- 1 ----------------
+      | Traceback (most recent call last):
+      |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 756, in stream_tripforge
+      |     async for event in p_runner.run_async(user_id="user_1", session_id="sess_profile", new_message=json.dumps(raw_input)):
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 971, in run_async
+      |     if new_message and not new_message.role:
+      |                            ^^^^^^^^^^^^^^^^
+      | AttributeError: 'str' object has no attribute 'role'
+      +------------------------------------
+================================================================================
+
+================================================================================
+Timestamp: 2026-06-28T13:59:42.655627
+Error Type: ExceptionGroup
+Error Message: unhandled errors in a TaskGroup (1 sub-exception)
+Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\codingProject\GITHUB\Kaggle\app.py", line 201, in run_pipeline
+  |     async for event in generator:
+  |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 712, in stream_tripforge
+  |     async with AsyncExitStack() as stack:
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 754, in __aexit__
+  |     raise exc_details[1]
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+  |     cb_suppress = await cb(*exc_details)
+  |                   ^^^^^^^^^^^^^^^^^^^^^^
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 231, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 182, in stdio_client
+  |     async with (
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Exception Group Traceback (most recent call last):
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 189, in stdio_client
+    |     yield read_stream, write_stream
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+    |     cb_suppress = await cb(*exc_details)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\shared\session.py", line 238, in __aexit__
+    |     return await self._task_group.__aexit__(exc_type, exc_val, exc_tb)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+    |     raise BaseExceptionGroup(
+    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+    +-+---------------- 1 ----------------
+      | Traceback (most recent call last):
+      |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 756, in stream_tripforge
+      |     async for event in p_runner.run_async(
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 971, in run_async
+      |     if new_message and not new_message.role:
+      |                            ^^^^^^^^^^^^^^^^
+      | AttributeError: 'str' object has no attribute 'role'
+      +------------------------------------
+================================================================================
+
+================================================================================
+Timestamp: 2026-06-28T14:00:05.917754
+Error Type: ExceptionGroup
+Error Message: unhandled errors in a TaskGroup (1 sub-exception)
+Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\codingProject\GITHUB\Kaggle\app.py", line 201, in run_pipeline
+  |     async for event in generator:
+  |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 712, in stream_tripforge
+  |     async with AsyncExitStack() as stack:
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 754, in __aexit__
+  |     raise exc_details[1]
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+  |     cb_suppress = await cb(*exc_details)
+  |                   ^^^^^^^^^^^^^^^^^^^^^^
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 231, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 182, in stdio_client
+  |     async with (
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Exception Group Traceback (most recent call last):
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 189, in stdio_client
+    |     yield read_stream, write_stream
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+    |     cb_suppress = await cb(*exc_details)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\shared\session.py", line 238, in __aexit__
+    |     return await self._task_group.__aexit__(exc_type, exc_val, exc_tb)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+    |     raise BaseExceptionGroup(
+    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+    +-+---------------- 1 ----------------
+      | Traceback (most recent call last):
+      |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 756, in stream_tripforge
+      |     async for event in p_runner.run_async(
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 971, in run_async
+      |     if new_message and not new_message.role:
+      |                            ^^^^^^^^^^^^^^^^
+      | AttributeError: 'str' object has no attribute 'role'
+      +------------------------------------
+================================================================================
+
+================================================================================
+Timestamp: 2026-06-28T14:04:05.681095
+Error Type: ExceptionGroup
+Error Message: unhandled errors in a TaskGroup (1 sub-exception)
+Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\codingProject\GITHUB\Kaggle\app.py", line 201, in run_pipeline
+  |     async for event in generator:
+  |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 712, in stream_tripforge
+  |     async with AsyncExitStack() as stack:
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 754, in __aexit__
+  |     raise exc_details[1]
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+  |     cb_suppress = await cb(*exc_details)
+  |                   ^^^^^^^^^^^^^^^^^^^^^^
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 231, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 182, in stdio_client
+  |     async with (
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Exception Group Traceback (most recent call last):
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 189, in stdio_client
+    |     yield read_stream, write_stream
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+    |     cb_suppress = await cb(*exc_details)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\shared\session.py", line 238, in __aexit__
+    |     return await self._task_group.__aexit__(exc_type, exc_val, exc_tb)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+    |     raise BaseExceptionGroup(
+    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+    +-+---------------- 1 ----------------
+      | Traceback (most recent call last):
+      |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 756, in stream_tripforge
+      |     async for event in p_runner.run_async(
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 983, in run_async
+      |     session = await self._get_or_create_session(
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 861, in _get_or_create_session
+      |     raise SessionNotFoundError(message)
+      | google.adk.errors.session_not_found_error.SessionNotFoundError: Session not found: sess_profile
+      +------------------------------------
+================================================================================
+
+================================================================================
+Timestamp: 2026-06-28T14:09:32.257668
+Error Type: ExceptionGroup
+Error Message: unhandled errors in a TaskGroup (1 sub-exception)
+Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\codingProject\GITHUB\Kaggle\app.py", line 201, in run_pipeline
+  |     async for event in generator:
+  |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 712, in stream_tripforge
+  |     async with AsyncExitStack() as stack:
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 754, in __aexit__
+  |     raise exc_details[1]
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+  |     cb_suppress = await cb(*exc_details)
+  |                   ^^^^^^^^^^^^^^^^^^^^^^
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 231, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 182, in stdio_client
+  |     async with (
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Exception Group Traceback (most recent call last):
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 189, in stdio_client
+    |     yield read_stream, write_stream
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+    |     cb_suppress = await cb(*exc_details)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\shared\session.py", line 238, in __aexit__
+    |     return await self._task_group.__aexit__(exc_type, exc_val, exc_tb)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+    |     raise BaseExceptionGroup(
+    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+    +-+---------------- 1 ----------------
+      | Traceback (most recent call last):
+      |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 793, in stream_tripforge
+      |     async for event in r_runner.run_async(
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 1017, in run_async
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 574, in _run_node_async
+      |     await self._cleanup_root_task(task, self.agent.name)
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 815, in _cleanup_root_task
+      |     await task
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 560, in _drive_root_node
+      |     raise ctx.error
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\workflow\_node_runner.py", line 135, in run
+      |     await self._execute_node(ctx, node_input)
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\workflow\_node_runner.py", line 255, in _execute_node
+      |     await self._run_node_loop(ctx, node_input)
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\workflow\_node_runner.py", line 269, in _run_node_loop
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\workflow\_base_node.py", line 217, in run
+      |     async for item in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\agents\llm_agent.py", line 559, in _run_impl
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\workflow\_llm_agent_wrapper.py", line 383, in run_llm_agent_as_node
+      |     async for event in run_iter:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\agents\base_agent.py", line 305, in run_async
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\agents\llm_agent.py", line 515, in _run_async_impl
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 889, in run_async
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 968, in _run_one_step_async
+      |     async for llm_response in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 1362, in _call_llm_async
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 1340, in _call_llm_with_tracing
+      |     async for llm_response in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 1423, in _run_and_handle_error
+      |     async for response in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 408, in _run_and_handle_error
+      |     raise model_error
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 385, in _run_and_handle_error
+      |     async for llm_response in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\models\google_llm.py", line 274, in generate_content_async
+      |     response = await self.api_client.aio.models.generate_content(
+      |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\genai\models.py", line 8679, in generate_content
+      |     return await self._generate_content(
+      |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\genai\models.py", line 7153, in _generate_content
+      |     response = await self._api_client.async_request(
+      |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\genai\_api_client.py", line 1664, in async_request
+      |     result = await self._async_request(
+      |              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\genai\_api_client.py", line 1597, in _async_request
+      |     return await self._async_retry(  # type: ignore[no-any-return]
+      |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\tenacity\asyncio\__init__.py", line 112, in __call__
+      |     do = await self.iter(retry_state=retry_state)
+      |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\tenacity\asyncio\__init__.py", line 157, in iter
+      |     result = await action(retry_state)
+      |              ^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\tenacity\_utils.py", line 111, in inner
+      |     return call(*args, **kwargs)
+      |            ^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\tenacity\__init__.py", line 413, in exc_check
+      |     raise retry_exc.reraise()
+      |           ^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\tenacity\__init__.py", line 184, in reraise
+      |     raise self.last_attempt.result()
+      |           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\_base.py", line 449, in result
+      |     return self.__get_result()
+      |            ^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\_base.py", line 401, in __get_result
+      |     raise self._exception
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\tenacity\asyncio\__init__.py", line 116, in __call__
+      |     result = await fn(*args, **kwargs)
+      |              ^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\genai\_api_client.py", line 1528, in _async_request_once
+      |     await errors.APIError.raise_for_async_response(response)
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\genai\errors.py", line 247, in raise_for_async_response
+      |     await cls.raise_error_async(status_code, response_json, response)
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\genai\errors.py", line 271, in raise_error_async
+      |     raise ServerError(status_code, response_json, response)
+      | google.genai.errors.ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+      +------------------------------------
+================================================================================
+
+================================================================================
+Timestamp: 2026-06-28T14:15:47.495329
+Error Type: ExceptionGroup
+Error Message: unhandled errors in a TaskGroup (1 sub-exception)
+Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\codingProject\GITHUB\Kaggle\app.py", line 201, in run_pipeline
+  |     async for event in generator:
+  |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 712, in stream_tripforge
+  |     async with AsyncExitStack() as stack:
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 754, in __aexit__
+  |     raise exc_details[1]
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+  |     cb_suppress = await cb(*exc_details)
+  |                   ^^^^^^^^^^^^^^^^^^^^^^
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 231, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 182, in stdio_client
+  |     async with (
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 162, in stdout_reader
+    |     await read_stream_writer.send(session_message)
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\streams\memory.py", line 249, in send
+    |     self.send_nowait(item)
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\streams\memory.py", line 220, in send_nowait
+    |     raise BrokenResourceError
+    | anyio.BrokenResourceError
+    +------------------------------------
+================================================================================
+
+================================================================================
+Timestamp: 2026-06-28T14:19:25.588514
+Error Type: ExceptionGroup
+Error Message: unhandled errors in a TaskGroup (1 sub-exception)
+Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\codingProject\GITHUB\Kaggle\APP.PY", line 213, in run_pipeline
+  |     async for event in generator:
+  |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 712, in stream_tripforge
+  |     async with AsyncExitStack() as stack:
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 754, in __aexit__
+  |     raise exc_details[1]
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+  |     cb_suppress = await cb(*exc_details)
+  |                   ^^^^^^^^^^^^^^^^^^^^^^
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 231, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 182, in stdio_client
+  |     async with (
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Exception Group Traceback (most recent call last):
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 189, in stdio_client
+    |     yield read_stream, write_stream
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+    |     cb_suppress = await cb(*exc_details)
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\shared\session.py", line 238, in __aexit__
+    |     return await self._task_group.__aexit__(exc_type, exc_val, exc_tb)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+    |     raise BaseExceptionGroup(
+    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+    +-+---------------- 1 ----------------
+      | Traceback (most recent call last):
+      |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 793, in stream_tripforge
+      |     async for event in r_runner.run_async(
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 1017, in run_async
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 574, in _run_node_async
+      |     await self._cleanup_root_task(task, self.agent.name)
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 815, in _cleanup_root_task
+      |     await task
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\runners.py", line 560, in _drive_root_node
+      |     raise ctx.error
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\workflow\_node_runner.py", line 135, in run
+      |     await self._execute_node(ctx, node_input)
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\workflow\_node_runner.py", line 255, in _execute_node
+      |     await self._run_node_loop(ctx, node_input)
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\workflow\_node_runner.py", line 269, in _run_node_loop
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\workflow\_base_node.py", line 217, in run
+      |     async for item in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\agents\llm_agent.py", line 559, in _run_impl
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\workflow\_llm_agent_wrapper.py", line 383, in run_llm_agent_as_node
+      |     async for event in run_iter:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\agents\base_agent.py", line 305, in run_async
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\agents\llm_agent.py", line 515, in _run_async_impl
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 889, in run_async
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 978, in _run_one_step_async
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 1072, in _postprocess_async
+      |     async for event in agen:
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\base_llm_flow.py", line 1200, in _postprocess_handle_function_calls_async
+      |     if function_response_event := await functions.handle_function_calls_async(
+      |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\functions.py", line 398, in handle_function_calls_async
+      |     return await handle_function_call_list_async(
+      |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\functions.py", line 444, in handle_function_call_list_async
+      |     function_response_events = await asyncio.gather(*tasks)
+      |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\functions.py", line 647, in _execute_single_function_call_async
+      |     tel_ctx.function_response_event = await _run_with_trace()
+      |                                       ^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\functions.py", line 587, in _run_with_trace
+      |     raise tool_error
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\functions.py", line 574, in _run_with_trace
+      |     function_response = await __call_tool_async(
+      |                         ^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\flows\llm_flows\functions.py", line 1166, in __call_tool_async
+      |     return await tool.run_async(args=args, tool_context=tool_context)
+      |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\tools\function_tool.py", line 275, in run_async
+      |     return await self._invoke_callable(self.func, args_to_call)
+      |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\adk\tools\function_tool.py", line 296, in _invoke_callable
+      |     return await target(**args_to_call)
+      |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 574, in get_weather_tool
+      |     raise PermissionError("Access to external Weather API denied by user.")
+      | PermissionError: Access to external Weather API denied by user.
+      +------------------------------------
+================================================================================
+
+================================================================================
+Timestamp: 2026-06-28T14:24:30.380006
+Error Type: ExceptionGroup
+Error Message: unhandled errors in a TaskGroup (1 sub-exception)
+Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\codingProject\GITHUB\Kaggle\APP.PY", line 213, in run_pipeline
+  |     async for event in generator:
+  |   File "D:\codingProject\GITHUB\Kaggle\tripforge\orchestrator.py", line 802, in stream_tripforge
+  |     async with AsyncExitStack() as stack:
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 754, in __aexit__
+  |     raise exc_details[1]
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 737, in __aexit__
+  |     cb_suppress = await cb(*exc_details)
+  |                   ^^^^^^^^^^^^^^^^^^^^^^
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 231, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 182, in stdio_client
+  |     async with (
+  |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\mcp\client\stdio\__init__.py", line 162, in stdout_reader
+    |     await read_stream_writer.send(session_message)
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\streams\memory.py", line 249, in send
+    |     self.send_nowait(item)
+    |   File "C:\Users\Panda\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\streams\memory.py", line 220, in send_nowait
+    |     raise BrokenResourceError
+    | anyio.BrokenResourceError
+    +------------------------------------
+================================================================================

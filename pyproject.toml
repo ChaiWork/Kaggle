@@ -6,15 +6,12 @@ requires-python = ">=3.11"
 dependencies = [
   "google-adk",
   "mcp",
-  "click",
   "httpx",
   "rich",
   "python-dotenv",
   "cryptography",
+  "flask",
 ]
-
-[project.scripts]
-tripforge = "tripforge.cli:tripforge"
 
 [build-system]
 requires = ["hatchling"]

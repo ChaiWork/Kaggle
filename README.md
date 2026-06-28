@@ -1,6 +1,6 @@
 # 🌍 TripForge
 
-> **AI-powered hyper-personalized travel planning agent**
+> **AI-powered hyper-personalized travel planning web agent**
 
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -10,40 +10,48 @@
 
 ## 📖 What is TripForge?
 
-TripForge is an autonomous, multi-agent travel concierge system developed for the Kaggle "Vibecoding Agents Capstone Project" competition. The system takes traveler preferences (such as destination, budget, accessibility needs, and dietary restrictions) and designs a custom, day-by-day travel itinerary. Leveraging real-time Model Context Protocol (MCP) tools and Google's Agent Development Kit (ADK), it dynamically monitors local weather, transit costs, and active city disruptions to adapt plans instantly when strikes, cancellations, or weather disruptions occur.
+TripForge is an autonomous, multi-agent travel concierge system developed for the Kaggle "Vibecoding Agents Capstone Project" competition. The system accepts traveler preferences (such as destination, budget, accessibility needs, and dietary restrictions) through a beautiful web dashboard and designs a custom, day-by-day travel itinerary. Leveraging real-time Model Context Protocol (MCP) tools and Google's Agent Development Kit (ADK), it dynamically monitors local weather, transit costs, and active city disruptions to adapt plans instantly in the browser when strikes, closures, or weather disruptions occur.
+
+The application streams agent progress in real time using Server-Sent Events (SSE) so users can watch each agent working live under the hood.
 
 ---
 
 ## 🏗️ System Architecture
 
-TripForge is orchestrated around a sequential multi-agent pipeline linked to a standalone Model Context Protocol (MCP) server:
+TripForge is orchestrated around a sequential multi-agent pipeline linked to a standalone Model Context Protocol (MCP) server, serving outputs directly to a Flask web server:
 
 ```
-   User Input
-       │
-       ▼
-   ┌─────────────────────────────────────────┐
-   │           TripForge Orchestrator         │
-   └─────────────────────────────────────────┘
-       │           │           │           │
-       ▼           ▼           ▼           ▼
-   Profile     Research    Itinerary  Disruption
-    Agent       Agent        Agent      Agent
-       │           │           │           │
-       └───────────┴───────────┴───────────┘
-                       │
-                       ▼
-           ┌───────────────────────┐
-           │      MCP Server       │
-           │  ┌─────────────────┐  │
-           │  │  Weather Tool   │  │
-           │  │ Activity Search │  │
-           │  │  Country Info   │  │
-           │  │  Transport Est. │  │
-           │  │ Disruption Check│  │
-           └──┴─────────────────┴──┘
-                       │
-                       ▼
+              User Web browser
+                     │
+                     ▼
+         ┌───────────────────────┐
+         │   Flask Web Server    │
+         │       (app.py)        │
+         └───────────────────────┘
+                     │  (SSE Logs / Redirects)
+                     ▼
+         ┌───────────────────────┐
+         │ TripForge Orchestrator│
+         └───────────────────────┘
+             │   │   │   │
+             ▼   ▼   ▼   ▼
+         Profile Research Itinerary Disruption
+          Agent    Agent     Agent     Agent
+             │   │   │   │
+             └─┬─┴─┬─┴─┬─┘
+               │   │   │
+               ▼   ▼   ▼
+         ┌───────────────────────┐
+         │      MCP Server       │
+         │  ┌─────────────────┐  │
+         │  │  Weather Tool   │  │
+         │  │ Activity Search │  │
+         │  │  Country Info   │  │
+         │  │  Transport Est. │  │
+         │  │ Disruption Check│  │
+         └──┴─────────────────┴──┘
+                     │
+                     ▼
                External APIs
           (Open-Meteo, RestCountries,
            Local Activities DB)
@@ -67,74 +75,27 @@ pip install -e .
 cp .env.example .env
 ```
 
-Open `.env` and add your Google Gemini and OpenWeatherMap credentials:
+Open `.env` and add your Google Gemini API key:
 ```env
 GOOGLE_API_KEY=your_gemini_api_key_here
-OPENWEATHERMAP_API_KEY=your_openweathermap_api_key_here
 ```
 
-Generate your first plan:
+Launch the Flask web server:
 ```bash
-tripforge plan --destination "Paris" --days 3 --travelers 2 --budget 1500 --interests "art,food"
+python app.py
 ```
+Open **[http://127.0.0.1:5000](http://127.0.0.1:5000)** in your browser to plan your first journey!
 
 ---
 
 ## ⚡ Try Without API Keys (Mock Mode)
 
-To allow instant testing and grading, TripForge includes a full mock simulation pipeline. If no API keys are present, or when calling the `demo` command, the system automatically patches the ADK runner to simulate reasoning offline.
+To allow instant testing and grading, TripForge includes a full mock simulation pipeline. If no API keys are present in the environment, the system automatically redirects to the mock generator runner.
 
-Execute the demo instantly:
-```bash
-tripforge demo
-```
-This runs the full multi-agent orchestrator offline, starts the local MCP server, checks for mock disruptions, and saves a beautiful 3-day Paris itinerary to `paris_trip.md`.
-
----
-
-## 🕹️ CLI Commands & Examples
-
-### 1. `tripforge plan`
-Generate an itinerary matching custom constraints.
-```bash
-tripforge plan \
-  --destination "Paris" \
-  --days 3 \
-  --travelers 2 \
-  --budget 2000 \
-  --currency USD \
-  --accessibility "wheelchair" \
-  --dietary "gluten-free" \
-  --interests "art,food" \
-  --output "paris_trip.md"
-```
-
-### 2. `tripforge replan`
-Rebuild an itinerary to resolve a disruption.
-```bash
-tripforge replan \
-  --itinerary paris_trip.md \
-  --disruption "Louvre closed due to strike" \
-  --output "paris_trip_updated.md"
-```
-
-### 3. `tripforge profile create`
-Securely validate and save traveler preferences as encrypted JSON files.
-```bash
-tripforge profile create \
-  --name "family-paris" \
-  --travelers 4 \
-  --accessibility "wheelchair" \
-  --dietary "gluten-free" \
-  --interests "art,food" \
-  --save "profiles/family.json"
-```
-
-### 4. `tripforge profile list`
-List all saved traveler profiles in the local database.
-```bash
-tripforge profile list
-```
+You can trigger a pre-configured demo with one click:
+1. Navigate to **[http://127.0.0.1:5000/demo](http://127.0.0.1:5000/demo)**.
+2. Click **🎬 Launch Demo Scenario**.
+3. Watch the step checklist (👤 $\rightarrow$ 🔍 $\rightarrow$ 📅 $\rightarrow$ ⚡) and raw logs stream live in the browser as the agents coordinate offline data.
 
 ---
 
@@ -145,9 +106,9 @@ TripForge demonstrates the four core components of the Kaggle Vibecoding Agent C
 | Concept | Location in Codebase | Description |
 | :--- | :--- | :--- |
 | **Multi-Agent System (ADK)** | [tripforge/agents/](file:///d:/codingProject/GITHUB/Kaggle/tripforge/agents/) | Uses Google's code-first `google-adk` framework to implement four specialized agents: Profile, Research, Itinerary, and Disruption Agents. |
-| **MCP Server** | [tripforge/mcp_server/](file:///d:/codingProject/GITHUB/Kaggle/tripforge/mcp_server/) | Runs a standalone Python Model Context Protocol server exposing weather, activities database searches, and disruption checkers. |
-| **Antigravity** | [tripforge/cli.py](file:///d:/codingProject/GITHUB/Kaggle/tripforge/cli.py) | Created autonomously by the Antigravity developer agent. Demonstrates clean code, offline fallback loops, and Windows console safety. |
-| **Agent Skills (CLI)** | [tripforge/cli.py](file:///d:/codingProject/GITHUB/Kaggle/tripforge/cli.py) | Exposes all agent commands using `Click` and renders outputs using `Rich` tables, columns, progress indicators, and spinners. |
+| **MCP Server** | [tripforge/mcp_server/](file:///d:/codingProject/GITHUB/Kaggle/tripforge/mcp_server/) | Runs a standalone Python Model Context Protocol server exposing weather, activities database searches, and disruption checkers over stdio transport. |
+| **Antigravity** | [app.py](file:///d:/codingProject/GITHUB/Kaggle/app.py) | Created autonomously by the Antigravity developer agent. Features clean code, offline fallback loops, and Windows console safety. |
+| **Agent Skills (Web UI)** | [templates/](file:///d:/codingProject/GITHUB/Kaggle/templates/) | Exposes all agent interactions and live logs using a responsive Flask web application with real-time SSE streaming. |
 
 ---
 
@@ -155,11 +116,11 @@ TripForge demonstrates the four core components of the Kaggle Vibecoding Agent C
 
 TripForge is built with robust security controls to protect traveler privacy:
 
-1. **Profile Data Encryption**: Traveler profiles are stored encrypted using symmetric Fernet cryptography. The key is derived dynamically at runtime from machine-specific hardware fingerprints (UUID/node properties) and is never stored on disk.
+1. **Profile Data Encryption**: Traveler preferences are validated and encrypted using symmetric Fernet cryptography with a dynamically derived hardware fingerprint (no key saved on disk).
 2. **PII Scrubbing**: Logs are automatically scrubbed using regex rules to replace emails, phone numbers, and passport-like digits with `[REDACTED]` tokens.
 3. **Input Sanitization**: Input fields are validated against strict filters. Destinations are checked against supported cities, and budgets are limited to a safe range ($10 - $1,000,000) to block injection patterns.
 4. **MCP Call Signing**: MCP tool calls are signed with an HMAC-SHA256 signature containing parameters and verified by the server before tool execution.
-5. **No-Cloud-Sync Guard**: Generates console alerts before querying external services and prompts the user for consent before making outgoing live connections containing query parameters.
+5. **No-Cloud-Sync Guard**: Warns before querying external services and prompts the user for consent before making outgoing live connections.
 
 ---
 
@@ -167,20 +128,31 @@ TripForge is built with robust security controls to protect traveler privacy:
 
 ```
 tripforge/
-├── pyproject.toml
-├── .env.example
-├── .gitignore
-├── README.md
-├── requirements.txt
+├── app.py                          # Flask application entry point
+├── pyproject.toml                  # Package dependencies config
+├── requirements.txt                # Python requirements
+├── .env.example                    # Environment variable template
+├── .gitignore                      # Excludes .env, outputs, etc.
+├── README.md                       # Competition documentation
 ├── data/
-│   └── activities_db.json
+│   └── activities_db.json          # Local activities database
 ├── tests/
-│   └── test_tripforge.py
+│   └── test_tripforge.py           # Pytest unit tests suite
+├── templates/                      # Flask HTML templates
+│   ├── base.html                   # Core layout skeleton
+│   ├── index.html                  # Main interactive planning form
+│   ├── result.html                 # Dual-state progress stream + results page
+│   ├── replan.html                 # Standalone disruption resolver
+│   └── demo.html                   # Pre-configured demo dashboard
+├── static/                         # Static assets
+│   ├── css/
+│   │   └── custom.css              # Custom font styles and animations
+│   └── js/
+│       └── stream.js               // SSE streaming logic receiver
 ├── tripforge/
 │   ├── __init__.py
-│   ├── cli.py
-│   ├── orchestrator.py
-│   ├── agents/
+│   ├── orchestrator.py             # Generator-based multi-agent pipeline
+│   ├── agents/                     # Google ADK Agents
 │   │   ├── __init__.py
 │   │   ├── profile_agent.py
 │   │   ├── research_agent.py
@@ -188,16 +160,16 @@ tripforge/
 │   │   └── disruption_agent.py
 │   ├── mcp_server/
 │   │   ├── __init__.py
-│   │   └── travel_tools_server.py
-│   ├── tools/
+│   │   └── travel_tools_server.py  # Python MCP SDK travel tools server
+│   ├── tools/                      # Tool Client Wrappers
 │   │   ├── __init__.py
 │   │   ├── weather_tool.py
 │   │   ├── activities_tool.py
 │   │   └── country_info_tool.py
 │   └── utils/
 │       ├── __init__.py
-│       ├── security.py
-│       └── formatters.py
+│       ├── security.py             # HMAC, Fernet keys, and PII redactor
+│       └── formatters.py           # HTML summary tables compiler
 └── profiles/
     └── .gitkeep
 ```

@@ -161,7 +161,17 @@ def guard_external_call(service_name: str, location_details: str = None) -> bool
     if location_details:
         click.secho(f"[SECURITY GUARD] Data sent includes location/query details: '{location_details}'", fg="yellow")
         
-    # Check if env allows non-interactive bypass (for automation tests)
+    # Check if we are running in web mode
+    is_web = os.getenv("TRIPFORGE_WEB_MODE", "false").lower() == "true"
+    if is_web:
+        if os.getenv("TRIPFORGE_BYPASS_GUARD", "false").lower() == "true":
+            click.secho("[SECURITY GUARD] Consent pre-granted by web user.", fg="green")
+            return True
+        else:
+            click.secho("[SECURITY GUARD] Consent denied/not granted by web user. Falling back to cached/mock data.", fg="red", bold=True)
+            return False
+
+    # CLI fallback (interactive terminal prompt)
     if os.getenv("TRIPFORGE_BYPASS_GUARD", "false").lower() == "true":
         click.secho("[SECURITY GUARD] Consent automatically granted via environment flag.", fg="green")
         return True
