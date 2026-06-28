@@ -35,7 +35,7 @@ def get_disruption_agent(model_name: str = "gemini-2.5-flash", tools: List[Any] 
         "---REPLANNED_MARKDOWN---\n"
         "[Insert beautiful updated markdown itinerary here, with 'What Changed' at the top and ⚡ emojis on changed sections]\n\n"
         "---REPLANNED_JSON---\n"
-        "[Insert clean, valid JSON block representing the updated structured data with keys: destination, days, travelers, budget, currency, total_cost, packing_suggestions, emergency_contacts, currency_tips, what_changed, and days_list. "
+        "[Insert clean, valid JSON block representing the updated structured data with keys: destination, days, travelers, budget, currency, total_cost, packing_suggestions, emergency_contacts, currency_tips, what_changed, weather_high, weather_low, weather_condition, weather_icon, latitude, longitude, and days_list. "
         "For modified activity slots, mark the activity dict with 'is_replanned': true so they render with the ⚡ emoji]"
     )
     

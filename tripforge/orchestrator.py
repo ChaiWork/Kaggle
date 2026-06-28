@@ -658,76 +658,97 @@ def _normalize_summary_data(summary_data: Any, destination: str, days: int, trav
     import urllib.request
     import urllib.parse
     
-    coords_map = {
-        "paris": (48.8566, 2.3522),
-        "tokyo": (35.6762, 139.6503),
-        "barcelona": (41.3851, 2.1734),
-        "new york": (40.7128, -74.0060),
-        "bali": (-8.4095, 115.1889),
-        "berlin": (52.5200, 13.4050),
-        "germany": (52.5200, 13.4050),
-        "munich": (48.1351, 11.5820),
-        "london": (51.5074, -0.1278)
-    }
+    lat = summary_data.get("latitude")
+    lon = summary_data.get("longitude")
     
-    dest_clean = destination.strip().lower()
-    matched_coords = None
-    for key, coords in coords_map.items():
-        if key in dest_clean:
-            matched_coords = coords
-            break
-            
-    if matched_coords:
-        lat, lon = matched_coords
-    else:
-        try:
-            quoted = urllib.parse.quote(destination)
-            url = f"https://geocoding-api.open-meteo.com/v1/search?name={quoted}&count=1&language=en&format=json"
-            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-            with urllib.request.urlopen(req, timeout=3.0) as response:
-                data = json.loads(response.read().decode())
-                if data.get("results"):
-                    lat = data["results"][0]["latitude"]
-                    lon = data["results"][0]["longitude"]
-                else:
-                    lat, lon = 48.8566, 2.3522
-        except Exception:
-            lat, lon = 48.8566, 2.3522
+    if lat is None or lon is None:
+        coords_map = {
+            "paris": (48.8566, 2.3522),
+            "tokyo": (35.6762, 139.6503),
+            "barcelona": (41.3851, 2.1734),
+            "new york": (40.7128, -74.0060),
+            "bali": (-8.4095, 115.1889),
+            "berlin": (52.5200, 13.4050),
+            "germany": (52.5200, 13.4050),
+            "munich": (48.1351, 11.5820),
+            "london": (51.5074, -0.1278)
+        }
+        
+        dest_clean = destination.strip().lower()
+        matched_coords = None
+        for key, coords in coords_map.items():
+            if key in dest_clean:
+                matched_coords = coords
+                break
+                
+        if matched_coords:
+            lat, lon = matched_coords
+        else:
+            try:
+                quoted = urllib.parse.quote(destination)
+                url = f"https://geocoding-api.open-meteo.com/v1/search?name={quoted}&count=1&language=en&format=json"
+                req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                with urllib.request.urlopen(req, timeout=3.0) as response:
+                    data = json.loads(response.read().decode())
+                    if data.get("results"):
+                        lat = data["results"][0]["latitude"]
+                        lon = data["results"][0]["longitude"]
+                    else:
+                        lat, lon = 48.8566, 2.3522
+            except Exception:
+                lat, lon = 48.8566, 2.3522
             
     summary_data["latitude"] = lat
     summary_data["longitude"] = lon
     
-    # Establish seasonal weather fallback defaults first
-    try:
-        month = 8
-        if start_date:
-            try:
-                month = datetime.strptime(start_date, "%Y-%m-%d").month
-            except Exception:
-                pass
-        
-        if month in [12, 1, 2]:
-            cond, icon = "Cool/Rainy", "🌧️"
-            high, low = 8, 3
-        elif month in [3, 4, 5]:
-            cond, icon = "Mild/Spring", "⛅"
-            high, low = 16, 8
-        elif month in [6, 7, 8]:
-            cond, icon = "Warm/Sunny", "☀️"
-            high, low = 26, 16
-        else:
-            cond, icon = "Cool/Autumn", "🍂"
-            high, low = 15, 9
+    # Check if weather elements were predicted by AI in the summary_data
+    w_high = summary_data.get("weather_high")
+    w_low = summary_data.get("weather_low")
+    w_cond = summary_data.get("weather_condition")
+    w_icon = summary_data.get("weather_icon")
+    
+    # If any weather field is missing from AI output, calculate geoclimatic seasonal fallbacks
+    if w_high is None or w_low is None or w_cond is None or w_icon is None:
+        try:
+            month = 8
+            if start_date:
+                try:
+                    month = datetime.strptime(start_date, "%Y-%m-%d").month
+                except Exception:
+                    pass
             
-        summary_data["weather_high"] = high
-        summary_data["weather_low"] = low
-        summary_data["weather_condition"] = cond
-        summary_data["weather_icon"] = icon
-    except Exception:
-        summary_data["weather_high"] = 22.0
-        summary_data["weather_low"] = 12.0
-        summary_data["weather_condition"] = "Mild Weather"
-        summary_data["weather_icon"] = "⛅"
+            # Geoclimatic zoning check: if within 15 degrees of equator (like Malaysia or Bali), use tropical defaults
+            if abs(lat) < 15:
+                cond, icon = "Warm/Tropical", "🌴"
+                high, low = 31, 24
+            else:
+                if month in [12, 1, 2]:
+                    cond, icon = "Cool/Rainy", "🌧️"
+                    high, low = 8, 3
+                elif month in [3, 4, 5]:
+                    cond, icon = "Mild/Spring", "⛅"
+                    high, low = 16, 8
+                elif month in [6, 7, 8]:
+                    cond, icon = "Warm/Sunny", "☀️"
+                    high, low = 26, 16
+                else:
+                    cond, icon = "Cool/Autumn", "🍂"
+                    high, low = 15, 9
+                
+            w_high = w_high if w_high is not None else high
+            w_low = w_low if w_low is not None else low
+            w_cond = w_cond if w_cond is not None else cond
+            w_icon = w_icon if w_icon is not None else icon
+        except Exception:
+            w_high = w_high if w_high is not None else 22.0
+            w_low = w_low if w_low is not None else 12.0
+            w_cond = w_cond if w_cond is not None else "Mild Weather"
+            w_icon = w_icon if w_icon is not None else "⛅"
+            
+    summary_data["weather_high"] = w_high
+    summary_data["weather_low"] = w_low
+    summary_data["weather_condition"] = w_cond
+    summary_data["weather_icon"] = w_icon
         
     # Attempt to query live forecast from Open-Meteo if not in mock mode
     is_mock = os.getenv("TRIPFORGE_MODE", "live").lower() == "mock"

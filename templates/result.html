@@ -290,26 +290,31 @@
                 targetEl.innerHTML = marked.parse(rawMarkdown);
             }
 
-            // Initialize Leaflet Map
+            // Initialize Leaflet Map with layout dimensions safety wrapper
             {% if not streaming and summary is defined %}
-            try {
-                const lat = {{ summary.latitude | default(48.8566) }};
-                const lon = {{ summary.longitude | default(2.3522) }};
-                const destName = "{{ summary.destination | default('Destination') }}";
-                
-                const map = L.map('map', { zoomControl: false }).setView([lat, lon], 12);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                    subdomains: 'abcd',
-                    maxZoom: 20
-                }).addTo(map);
-                
-                L.marker([lat, lon]).addTo(map)
-                    .bindPopup(`<strong class="text-gray-900">${destName}</strong>`)
-                    .openPopup();
-            } catch (e) {
-                console.error("Map initialization failed:", e);
-            }
+            setTimeout(() => {
+                try {
+                    const lat = {{ summary.latitude | default(48.8566) }};
+                    const lon = {{ summary.longitude | default(2.3522) }};
+                    const destName = "{{ summary.destination | default('Destination') }}";
+                    
+                    const map = L.map('map', { zoomControl: false }).setView([lat, lon], 12);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                        subdomains: 'abcd',
+                        maxZoom: 20
+                    }).addTo(map);
+                    
+                    L.marker([lat, lon]).addTo(map)
+                        .bindPopup(`<strong class="text-gray-900">${destName}</strong>`)
+                        .openPopup();
+                        
+                    // Recalculate size to ensure all tiles render correctly
+                    map.invalidateSize();
+                } catch (e) {
+                    console.error("Map initialization failed:", e);
+                }
+            }, 250);
             {% endif %}
         });
 

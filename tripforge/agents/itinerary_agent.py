@@ -36,7 +36,7 @@ def get_itinerary_agent(model_name: str = "gemini-2.5-flash", tools: List[Any] =
         "---ITINERARY_MARKDOWN---\n"
         "[Insert beautiful markdown itinerary here, including Trip Header, Daily Sections, dining suggestions, transit buffers, insider tips, and Trip Summary]\n\n"
         "---ITINERARY_JSON---\n"
-        "[Insert clean, valid JSON block representing the structured data with keys: destination, days, travelers, budget, currency, total_cost, packing_suggestions, emergency_contacts, currency_tips, and days_list. "
+        "[Insert clean, valid JSON block representing the structured data with keys: destination, days, travelers, budget, currency, total_cost, packing_suggestions, emergency_contacts, currency_tips, weather_high, weather_low, weather_condition, weather_icon, latitude, longitude, and days_list. "
         "Each item in days_list must contain day_num, theme, transport_note, insider_tip, daily_cost, activities (dict with morning, afternoon, evening slots), and meals (dict with breakfast, lunch, dinner)]"
     )
     
