@@ -13,13 +13,15 @@ WORKDIR /app
 # Copy dependency files
 COPY requirements.txt pyproject.toml ./
 
-# Install python dependencies, gunicorn, and the package
+# Install python dependencies and gunicorn
 RUN pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir gunicorn && \
-    pip install --no-cache-dir -e .
+    pip install --no-cache-dir gunicorn
 
 # Copy the application source code
 COPY . .
+
+# Install the package since source code is now present
+RUN pip install --no-cache-dir -e .
 
 # Expose target container port
 EXPOSE 8080
